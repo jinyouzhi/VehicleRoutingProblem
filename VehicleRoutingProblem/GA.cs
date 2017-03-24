@@ -16,8 +16,8 @@ namespace VehicleRoutingProblem
         int maxT;//繁衍代数
 
         int maxV;//最大车辆数
-        double Pw;//车辆超额惩罚系数
-        double Pc, Pm;//交叉概率和变异概率
+        double Pw = 300;//车辆超额惩罚系数
+        double Pc = 0.9, Pm = 0.9;//交叉概率和变异概率
 
         int[][] lastGroup;//父代种群
         int[][] newGroup;//子代种群

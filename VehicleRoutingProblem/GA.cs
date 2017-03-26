@@ -72,8 +72,8 @@ namespace VehicleRoutingProblem
             ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
             N = Form1.mapCur.N;
             maxT = form1.getTextBox8();
-            Scale = 1000;
-            maxV = 5;
+            Scale = 100;
+            maxV = 2;
             lastGroup = new int[Scale + 1][];
             newGroup = new int[Scale + 1][];
 

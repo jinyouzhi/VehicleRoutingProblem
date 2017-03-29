@@ -25,6 +25,9 @@ namespace VehicleRoutingProblem
         int[] bestGen;//最好染色体
         double bestFitness;
         int bestT;//代数
+        int[] bestplan;
+
+        int[][] plan;
 
         double bestEvalution;
 
@@ -51,49 +54,26 @@ namespace VehicleRoutingProblem
         /// <returns>返回初始化后染色体</returns>
         int[] randGroup()
         {
+            int tmp;
             //ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
             int[] res = new int[maxL];
-            for (int i = 0; i < N; ++i)
-                res[i] = i + 1;
-            for (int i = 0; i < N - 1; ++i)
+            for (int i = 0; i <= N; ++i)
+                res[i] = i;
+            for (int i = 1; i < N; ++i)
             {
                 //swap(ref res[i], ref res[ra.Next(i + 1, N - 1)]);
-                swap(ref res[i], ref res[ra.Next(0, 65535) % ((N - 1) - (i)) + i + 1]);
+                //洗牌算法，依次将i跟i~N随机交换
+                tmp = ra.Next(0, 65535) % ((N) - (i)) + i + 1;
+                swap(ref res[i], ref res[tmp]);
             }
             return res;
         }
 
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="form1">窗体，用于读取更改窗体数据</param>
-        internal void initialize(Form1 form1)
-        {
-            ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
-            N = Form1.mapCur.N;
-            maxT = form1.getTextBox8();
-            Scale = 100;
-            maxV = 2;
-            lastGroup = new int[Scale + 1][];
-            newGroup = new int[Scale + 1][];
-
-            Fitness = new double[Scale + 1];
-            Pi = new double[Scale + 1];
-
-            form1.listBox1.Items.Clear();
-            for (int i = 0; i <= Scale; ++i)
-            {
-                lastGroup[i] = randGroup();
-                Fitness[i] = Evaluate(ref lastGroup[i]);
-                form1.listBox1.Items.Add(getNum(lastGroup[i]));
-            }
-            updateBestGen(0);
-        }
 
         string getNum(int[] x)
         {
-            string res = x[0].ToString();
-            for (int i = 1; i < N; ++i)
+            string res = x[1].ToString();
+            for (int i = 2; i <= N; ++i)
                 res += "-" + x[i].ToString();
             return res;
         }
@@ -103,17 +83,60 @@ namespace VehicleRoutingProblem
         /// </summary>
         /// <param name="Gen">染色体</param>
         /// <returns>每辆车的服务的客户的顺序</returns>
-        int[] Decoding(int[] Gen)
+        //int[] Decoding(int[] Gen)
+        //{
+        //    int[] res = new int[maxL];//每辆车的服务的客户的顺序
+        //    double curWeight = Form1.mapCur.Goods[Gen[1]];
+        //    double curDistance = Form1.mapCur.Roads[0][Gen[1]];
+        //    res[1] = 1;
+        //    double evalution = 0;
+        //    //车辆数量
+        //    int v = 1;
+
+        //    for (int j = 2; j <= N; ++j)
+        //    {
+        //        curDistance += Form1.mapCur.Roads[Gen[j]][Gen[j - 1]];
+        //        curWeight += Form1.mapCur.Goods[Gen[j]];
+
+        //        //如果载重不足或者不够回程
+        //        if (curWeight > Form1.mapCur.MaxWeight || curDistance + Form1.mapCur.Roads[Gen[j]][0] > Form1.mapCur.MaxDistance)
+        //        {
+        //            ++v;//起用下一辆车
+        //            res[v] = res[v - 1] + 1;
+        //            evalution += curDistance - Form1.mapCur.Roads[Gen[j]][Gen[j - 1]] + Form1.mapCur.Roads[Gen[j - 1]][0];
+        //            curDistance = Form1.mapCur.Roads[0][Gen[j]];
+        //            curWeight = Form1.mapCur.Goods[Gen[j]];
+        //        }
+        //        else
+        //        {
+        //            ++res[v];
+        //        }
+        //    }
+        //    //加上最后一段回程
+        //    evalution += curDistance + Form1.mapCur.Roads[Gen[N]][0];
+
+        //    res[0] = v;
+        //    return res;
+        //}
+
+
+        /// <summary>
+        /// 染色体评价函数，输入一个染色体得到该染色体适应度
+        /// </summary>
+        /// <param name="Gen">被评价染色体 引用，下标0~L-1</param>
+        /// <returns>适应度</returns>
+        double Evaluate(ref int[] Gen, out int[] res)
         {
-            int[] res = new int[maxL];//每辆车的服务的客户的顺序
-            double curWeight = Form1.mapCur.Goods[Gen[0]];
-            double curDistance = Form1.mapCur.Roads[0][Gen[0]];
-            res[1] = 1;
+            res = new int[maxL];
+            double curWeight = Form1.mapCur.Goods[Gen[1]];
+            double curDistance = Form1.mapCur.Roads[0][Gen[1]];
             double evalution = 0;
+            res[1] = 1;
             //车辆数量
             int v = 1;
-
-            for (int j = 1; j < N; ++j)
+            //车辆超额数量
+            int flag = 0;
+            for (int j = 2; j <= N; ++j)
             {
                 curDistance += Form1.mapCur.Roads[Gen[j]][Gen[j - 1]];
                 curWeight += Form1.mapCur.Goods[Gen[j]];
@@ -123,7 +146,7 @@ namespace VehicleRoutingProblem
                 {
                     ++v;//起用下一辆车
                     res[v] = res[v - 1] + 1;
-                    evalution += curDistance - Form1.mapCur.Roads[Gen[j]][Gen[j - 1]] + Form1.mapCur.Roads[Gen[j - 1]][0];
+                    evalution += curDistance + Form1.mapCur.Roads[Gen[j - 1]][0] - Form1.mapCur.Roads[Gen[j]][Gen[j - 1]] ;
                     curDistance = Form1.mapCur.Roads[0][Gen[j]];
                     curWeight = Form1.mapCur.Goods[Gen[j]];
                 }
@@ -133,49 +156,14 @@ namespace VehicleRoutingProblem
                 }
             }
             //加上最后一段回程
-            bestEvalution = evalution += curDistance + Form1.mapCur.Roads[Gen[N - 1]][0];
+            evalution += curDistance + Form1.mapCur.Roads[Gen[N]][0];
 
             res[0] = v;
-            return res;
-        }
-
-
-        /// <summary>
-        /// 染色体评价函数，输入一个染色体得到该染色体适应度
-        /// </summary>
-        /// <param name="Gen">被评价染色体 引用，下标0~L-1</param>
-        /// <returns>适应度</returns>
-        double Evaluate(ref int[] Gen)
-        {
-            double curWeight = Form1.mapCur.Goods[Gen[0]];
-            double curDistance = Form1.mapCur.Roads[0][Gen[0]];
-            double evalution = 0;
-            //车辆数量
-            int v = 1;
-            //车辆超额数量
-            int flag = 0;
-            for (int j = 1; j < N; ++j)
-            {
-                curDistance += Form1.mapCur.Roads[Gen[j]][Gen[j - 1]];
-                curWeight += Form1.mapCur.Goods[Gen[j]];
-
-                //如果载重不足或者不够回程
-                if (curWeight > Form1.mapCur.MaxWeight || curDistance + Form1.mapCur.Roads[Gen[j]][0] > Form1.mapCur.MaxDistance)
-                {
-                    ++v;//起用下一辆车
-                    evalution += curDistance - Form1.mapCur.Roads[Gen[j]][Gen[j - 1]] + Form1.mapCur.Roads[Gen[j - 1]][0];
-                    curDistance = Form1.mapCur.Roads[0][Gen[j]];
-                    curWeight = Form1.mapCur.Goods[Gen[j]];
-                }
-            }
-            //加上最后一段回程
-            evalution += curDistance + Form1.mapCur.Roads[Gen[N - 1]][0];
-
             flag = v - maxV;//超额车辆
             if (flag < 0)//如果车辆不超额
                 flag = 0;
 
-            evalution += curDistance + flag * Pw;
+            evalution += flag * Pw;
             return 10.0 / evalution;//压缩适应度
         }
 
@@ -205,15 +193,17 @@ namespace VehicleRoutingProblem
         int[] updateBestGen(int t)
         {
             int index = 0;
-            for (int i = 1; i < Scale; ++i)
+            for (int i = 0; i < Scale; ++i)
+            {
                 if (Fitness[i] > Fitness[index])
                     index = i;
-
-            if (Fitness[index] > bestFitness)
-            {
-                bestFitness = Fitness[index];
-                bestGen = lastGroup[index];
-                bestT = t;
+                if (plan[i][0] <= maxT && Fitness[i] > bestFitness)
+                {
+                    bestFitness = Fitness[i];
+                    bestGen = lastGroup[i];
+                    bestT = t;
+                    bestplan = plan[i];
+                }
             }
             return lastGroup[index];
         }
@@ -234,11 +224,11 @@ namespace VehicleRoutingProblem
         {
             int ran1, ran2;
             int flag;
-            int[] S1 = new int[N], S2 = new int[N];
-            ran1 = ra.Next(0, 65535) % N;
+            int[] S1 = new int[N + 1], S2 = new int[N + 1];
+            ran1 = 1 + ra.Next(0, 65535) % N;
             do
             {
-                ran2 = ra.Next(0, 65535) % N;
+                ran2 = 1 + ra.Next(0, 65535) % N;
             } while (ran2 == ran1);
 
             if (ran1 > ran2)
@@ -249,7 +239,7 @@ namespace VehicleRoutingProblem
 
             flag = ran2 - ran1 + 1;//删除重复基因前染色体长度
 
-            for (int i = 0, j = ran1; i < flag; i++, j++)
+            for (int i = 1, j = ran1; i <= flag; i++, j++)
             {
                 S1[i] = F2[j];
                 S2[i] = F1[j];
@@ -257,19 +247,19 @@ namespace VehicleRoutingProblem
             //已近赋值i=ran2-ran1个基因
 
 
-            for (int k = 0, j = flag; j < N; j++)//染色体长度
+            for (int k = 1, j = flag + 1; j <= N; j++)//染色体长度
             {
             Lab3:
                 S1[j] = F1[k++];
-                for (int i = 0; i < flag; i++)
+                for (int i = 1; i <= flag; i++)
                 { if (S1[i] == S1[j]) goto Lab3; }
             }
 
-            for (int k = 0, j = flag; j < N; j++)//染色体长度
+            for (int k = 1, j = flag + 1; j <= N; j++)//染色体长度
             {
             Lab4:
                 S2[j] = F2[k++];
-                for (int i = 0; i < flag; i++)
+                for (int i = 1; i <= flag; i++)
                 { if (S2[i] == S2[j]) goto Lab4; }
             }
             F1 = S1;
@@ -279,13 +269,13 @@ namespace VehicleRoutingProblem
         void OnCVariation(ref int[] F)
         {
             int ran1, ran2;
-            int count = ra.Next(0, 65535) % N;
-            for (int i = 0; i < count; ++i)
+            int count = 1 + ra.Next(0, 65535) % N;
+            for (int i = 1; i <= count; ++i)
             {
-                ran1 = ra.Next(0, 65535) % N;
+                ran1 = 1 +  ra.Next(0, 65535) % N;
                 do
                 {
-                    ran2 = ra.Next(0, 65535) % N;
+                    ran2 = 1 + ra.Next(0, 65535) % N;
                 } while (ran1 == ran2);
                 swap(ref F[ran1], ref F[ran2]);
             }
@@ -323,6 +313,38 @@ namespace VehicleRoutingProblem
         }
 
         /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="form1">窗体，用于读取更改窗体数据</param>
+        internal void initialize(Form1 form1)
+        {
+            ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
+            N = Form1.mapCur.N;
+            maxT = form1.getTextBox8();
+            Scale = 100;
+            maxV = 2;
+            lastGroup = new int[Scale + 1][];
+            newGroup = new int[Scale + 1][];
+            bestFitness = -1;
+            bestGen = new int[N];
+            bestT = -1;
+
+            Fitness = new double[Scale + 1];
+            Pi = new double[Scale + 1];
+
+            plan = new int[Scale][];
+
+            form1.listBox1.Items.Clear();
+            for (int i = 0; i < Scale; ++i)
+            {
+                lastGroup[i] = randGroup();
+                Fitness[i] = Evaluate(ref lastGroup[i], out plan[i]);
+                form1.listBox1.Items.Add(getNum(lastGroup[i]));
+            }
+            //updateBestGen(0);
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="form1"></param>
@@ -339,10 +361,11 @@ namespace VehicleRoutingProblem
 
                 for (int i = 0; i < Scale; ++i)
                 {
-                    Fitness[i] = Evaluate(ref lastGroup[i]);
+                    Fitness[i] = Evaluate(ref lastGroup[i], out plan[i]);
                 }
                 form1.progressBar1.Value = t * 100 / maxT;
             }
+            updateBestGen(maxT);
 
             TimeSpan ts2 = new TimeSpan(DateTime.Now.Ticks);
             TimeSpan ts = ts2.Subtract(ts1).Duration();
@@ -356,22 +379,36 @@ namespace VehicleRoutingProblem
 
             //最好的染色体
             string s11 = "";
-            for (int i = 0; i < N; i++)
+            for (int i = 1; i <= N; i++)
                 s11 = s11 + " " + bestGen[i].ToString();
             form1.textBox3.Text = s11;
-
-            int[] assign = Decoding(bestGen);
 
             form1.listBox2.Items.Clear();
             for (int i = 0; i < Scale; ++i)
                 form1.listBox2.Items.Add(getNum(lastGroup[i]));
 
-            form1.textBox4.Text = assign[0].ToString();
+            bestEvalution = 10.0 / bestFitness;
+            form1.textBox4.Text = bestplan[0].ToString();
             form1.textBox5.Text = "";
-            for (int i = 1; i <= assign[0]; ++i)
-                form1.textBox5.Text += " " + assign[i].ToString();
-
+            for (int i = 1, j = 1; i <= bestplan[0]; ++i)
+            {
+                for (; j <= bestplan[i]; ++j)
+                    form1.textBox5.Text += bestGen[j].ToString() + " ";
+                form1.textBox5.Text += "| ";
+            }
             form1.textBox6.Text = bestEvalution.ToString();
+
+            //bestGen[1] = 1;
+            //bestGen[2] = 7;
+            //bestGen[3] = 3;
+            //bestGen[4] = 8;
+            //bestGen[5] = 5;
+            //bestGen[6] = 2;
+            //bestGen[7] = 4;
+            //bestGen[8] = 6;
+
+            //bestFitness = Evaluate(ref bestGen, out bestplan);
+
 
             form1.progressBar1.Value = 100;
 

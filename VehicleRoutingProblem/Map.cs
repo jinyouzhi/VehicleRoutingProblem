@@ -20,7 +20,7 @@ namespace VehicleRoutingProblem
             CsvReader csv = new CsvReader(sr, false);
             //字段数量
             int fieldCount = csv.FieldCount;
-            MapData res = new MapData(fieldCount - 1);
+            MapData res = new MapData(fieldCount - 1);//0-N 共 N+1 = fieldCount个
             //标题数组
             //string[] headers = csv.GetFieldHeaders();
             //只进的游标读取

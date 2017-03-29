@@ -125,7 +125,7 @@ namespace VehicleRoutingProblem
         /// </summary>
         /// <param name="Gen">被评价染色体 引用，下标0~L-1</param>
         /// <returns>适应度</returns>
-        double Evaluate(ref int[] Gen, out int[] res)
+        double Evaluate(int[] Gen, out int[] res)
         {
             res = new int[maxL];
             double curWeight = Form1.mapCur.Goods[Gen[1]];
@@ -195,14 +195,15 @@ namespace VehicleRoutingProblem
             int index = 0;
             for (int i = 0; i < Scale; ++i)
             {
+                Fitness[i] = Evaluate(lastGroup[i], out plan[i]);
                 if (Fitness[i] > Fitness[index])
                     index = i;
-                if (plan[i][0] <= maxT && Fitness[i] > bestFitness)
+                if (plan[i][0] <= maxV && Fitness[i] > bestFitness)
                 {
                     bestFitness = Fitness[i];
-                    bestGen = lastGroup[i];
+                    Array.Copy(lastGroup[i], bestGen, lastGroup[i].Length);
                     bestT = t;
-                    bestplan = plan[i];
+                    Array.Copy(plan[i], bestplan, plan[i].Length);
                 }
             }
             return lastGroup[index];
@@ -224,7 +225,7 @@ namespace VehicleRoutingProblem
         {
             int ran1, ran2;
             int flag;
-            int[] S1 = new int[N + 1], S2 = new int[N + 1];
+            int[] S1 = new int[maxL], S2 = new int[maxL];
             ran1 = 1 + ra.Next(0, 65535) % N;
             do
             {
@@ -290,7 +291,7 @@ namespace VehicleRoutingProblem
             double rand;
             Pi = CountRate(ref Fitness);
             for (k = 1; k < Scale; ++k)
-                newGroup[k] = lastGroup[select()];
+                Array.Copy(lastGroup[select()], newGroup[k], lastGroup[select()].Length);
 
             for (k = 1; k + 1 < Scale; k += 2)
             {
@@ -325,23 +326,27 @@ namespace VehicleRoutingProblem
             maxV = 2;
             lastGroup = new int[Scale + 1][];
             newGroup = new int[Scale + 1][];
+            for (int i = 0; i < Scale; ++i)
+                newGroup[i] = new int[maxL];
             bestFitness = -1;
-            bestGen = new int[N];
+            bestGen = new int[maxL];
             bestT = -1;
 
             Fitness = new double[Scale + 1];
             Pi = new double[Scale + 1];
 
             plan = new int[Scale][];
+            bestplan = new int[maxL];
+            for (int i = 0; i < Scale; ++i)
+                plan[i] = new int[maxL];
 
             form1.listBox1.Items.Clear();
             for (int i = 0; i < Scale; ++i)
             {
                 lastGroup[i] = randGroup();
-                Fitness[i] = Evaluate(ref lastGroup[i], out plan[i]);
+                //Fitness[i] = Evaluate(lastGroup[i], out plan[i]);
                 form1.listBox1.Items.Add(getNum(lastGroup[i]));
             }
-            //updateBestGen(0);
         }
 
         /// <summary>
@@ -354,15 +359,11 @@ namespace VehicleRoutingProblem
             for (int t = 0; t < maxT; ++t)
             {
                 //最好的个体保留到子代
-                newGroup[0] = updateBestGen(t);
+                Array.Copy(updateBestGen(t), newGroup[0], updateBestGen(t).Length);
                 Evolution();
 
-                lastGroup = newGroup;
-
-                for (int i = 0; i < Scale; ++i)
-                {
-                    Fitness[i] = Evaluate(ref lastGroup[i], out plan[i]);
-                }
+                Array.Copy(lastGroup, newGroup, lastGroup.Length);
+                
                 form1.progressBar1.Value = t * 100 / maxT;
             }
             updateBestGen(maxT);
@@ -387,7 +388,7 @@ namespace VehicleRoutingProblem
             for (int i = 0; i < Scale; ++i)
                 form1.listBox2.Items.Add(getNum(lastGroup[i]));
 
-            bestEvalution = 10.0 / bestFitness;
+            bestEvalution = 10.0 / bestFitness;// Evaluate(bestGen, out bestplan);
             form1.textBox4.Text = bestplan[0].ToString();
             form1.textBox5.Text = "";
             for (int i = 1, j = 1; i <= bestplan[0]; ++i)
@@ -407,7 +408,7 @@ namespace VehicleRoutingProblem
             //bestGen[7] = 4;
             //bestGen[8] = 6;
 
-            //bestFitness = Evaluate(ref bestGen, out bestplan);
+            //bestFitness = Evaluate(bestGen, out bestplan);
 
 
             form1.progressBar1.Value = 100;

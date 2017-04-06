@@ -322,7 +322,7 @@ namespace VehicleRoutingProblem
             ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
             N = Form1.mapCur.N;
             maxT = form1.getTextBox8();
-            Scale = 100;
+            Scale = 150;
             maxV = 2;
             lastGroup = new int[Scale + 1][];
             newGroup = new int[Scale + 1][];
@@ -359,7 +359,7 @@ namespace VehicleRoutingProblem
             for (int t = 0; t < maxT; ++t)
             {
                 //最好的个体保留到子代
-                Array.Copy(updateBestGen(t), newGroup[0], updateBestGen(t).Length);
+                Array.Copy(updateBestGen(t), newGroup[0], newGroup[0].Length);
                 Evolution();
 
                 Array.Copy(lastGroup, newGroup, lastGroup.Length);
@@ -407,6 +407,15 @@ namespace VehicleRoutingProblem
             //bestGen[6] = 2;
             //bestGen[7] = 4;
             //bestGen[8] = 6;
+
+            //bestGen[1] = 4;
+            //bestGen[2] = 7;
+            //bestGen[3] = 6;
+            //bestGen[4] = 2;
+            //bestGen[5] = 1;
+            //bestGen[6] = 3;
+            //bestGen[7] = 5;
+            //bestGen[8] = 8;
 
             //bestFitness = Evaluate(bestGen, out bestplan);
 

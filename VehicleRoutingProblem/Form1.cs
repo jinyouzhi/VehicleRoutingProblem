@@ -63,7 +63,7 @@ namespace VehicleRoutingProblem
                                    //Scale = int.Parse(textBox8.Text);
 
             //初始化
-            GA solve = new GA();
+            cGA solve = new cGA();
             solve.initialize(this);
             solve.run(this);
             //solve.maxT = int.Parse(textBox8.Text);

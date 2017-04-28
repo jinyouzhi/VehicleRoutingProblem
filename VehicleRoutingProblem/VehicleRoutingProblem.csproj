@@ -79,6 +79,7 @@
   <ItemGroup>
     <Compile Include="cGA.cs" />
     <Compile Include="GA.cs" />
+    <Compile Include="GABase.cs" />
     <Compile Include="MapData.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

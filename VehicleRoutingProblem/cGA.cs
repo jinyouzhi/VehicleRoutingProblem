@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VehicleRoutingProblem
 {
-    public class cGA
+    public class cGA : GABase
     {
         static int maxL = 100;
 
@@ -16,8 +12,8 @@ namespace VehicleRoutingProblem
         int maxT;//繁衍代数
 
         int maxV;//最大车辆数
-        double Pw = 300;//车辆超额惩罚系数
-        double Pc = 0.9, Pm = 0.9;//交叉概率和变异概率
+        double Pw;//车辆超额惩罚系数
+        double Pc, Pm;//交叉概率和变异概率
 
         int[][][] curGroup;//种群
 
@@ -329,8 +325,8 @@ namespace VehicleRoutingProblem
                     {
                         //否则按一定概率变异
                         rand = ra.Next(0, 65535) % 1000 / 1000.0;
-                        if (rand < Pm)
-                            RevVariation(ref curGroup[i][j]);
+                        //if (rand < Pm)
+                        //    RevVariation(ref curGroup[i][j]);
                     }
                 }
             }
@@ -341,13 +337,16 @@ namespace VehicleRoutingProblem
         /// 初始化
         /// </summary>
         /// <param name="form1">窗体，用于读取更改窗体数据</param>
-        internal void initialize(Form1 form1)
+        internal override void initialize(Form1 form1)
         {
             ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
             N = Form1.mapCur.N;
-            maxT = form1.getTextBox8();
-            ScaleN = 5;
-            maxV = 2;
+            ScaleN = (int)(Math.Ceiling(Math.Sqrt(double.Parse(form1.textBox12.Text.Trim()))));
+            maxT = int.Parse(form1.textBox8.Text.Trim());
+            maxV = int.Parse(form1.textBox10.Text.Trim());
+            Pc = double.Parse(form1.textBox5.Text.Trim());
+            Pm = double.Parse(form1.textBox9.Text.Trim());
+            Pw = double.Parse(form1.textBox11.Text.Trim());
             curGroup = new int[ScaleN][][];
             for (int i = 0; i < ScaleN; ++i)
             {
@@ -387,7 +386,7 @@ namespace VehicleRoutingProblem
         /// 
         /// </summary>
         /// <param name="form1"></param>
-        internal void run(Form1 form1)
+        internal override void run(Form1 form1)
         {
             TimeSpan ts1 = new TimeSpan(DateTime.Now.Ticks);
             for (int t = 0; t < maxT; ++t)
@@ -426,12 +425,13 @@ namespace VehicleRoutingProblem
 
             bestEvalution = 10.0 / bestFitness;// Evaluate(bestGen, out bestplan);
             form1.textBox4.Text = bestplan[0].ToString();
-            form1.textBox5.Text = "";
+            form1.listBox4.Items.Clear();
             for (int i = 1, j = 1; i <= bestplan[0]; ++i)
             {
+                string tmp = "";
                 for (; j <= bestplan[i]; ++j)
-                    form1.textBox5.Text += bestGen[j].ToString() + " ";
-                form1.textBox5.Text += "| ";
+                    tmp += bestGen[j].ToString() + " ";
+                form1.listBox4.Items.Add(tmp);
             }
             form1.textBox6.Text = bestEvalution.ToString();
 

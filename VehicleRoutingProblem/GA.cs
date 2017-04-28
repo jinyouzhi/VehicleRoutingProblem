@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VehicleRoutingProblem
 {
-    public class GA
+    public class GA : GABase
     {
         static int maxL = 100;
 
@@ -16,8 +16,8 @@ namespace VehicleRoutingProblem
         int maxT;//繁衍代数
 
         int maxV;//最大车辆数
-        double Pw = 300;//车辆超额惩罚系数
-        double Pc = 0.9, Pm = 0.9;//交叉概率和变异概率
+        double Pw ;//车辆超额惩罚系数
+        double Pc, Pm;//交叉概率和变异概率
 
         int[][] lastGroup;//父代种群
         int[][] newGroup;//子代种群
@@ -231,23 +231,17 @@ namespace VehicleRoutingProblem
             {
                 ran2 = 1 + ra.Next(0, 65535) % N;
             } while (ran2 == ran1);
-
             if (ran1 > ran2)
             {
                 swap(ref ran1, ref ran2);
             }
-
-
             flag = ran2 - ran1 + 1;//删除重复基因前染色体长度
-
             for (int i = 1, j = ran1; i <= flag; i++, j++)
             {
                 S1[i] = F2[j];
                 S2[i] = F1[j];
             }
             //已近赋值i=ran2-ran1个基因
-
-
             for (int k = 1, j = flag + 1; j <= N; j++)//染色体长度
             {
             Lab3:
@@ -255,7 +249,6 @@ namespace VehicleRoutingProblem
                 for (int i = 1; i <= flag; i++)
                 { if (S1[i] == S1[j]) goto Lab3; }
             }
-
             for (int k = 1, j = flag + 1; j <= N; j++)//染色体长度
             {
             Lab4:
@@ -317,13 +310,16 @@ namespace VehicleRoutingProblem
         /// 初始化
         /// </summary>
         /// <param name="form1">窗体，用于读取更改窗体数据</param>
-        internal void initialize(Form1 form1)
+        internal override void initialize(Form1 form1)
         {
             ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
             N = Form1.mapCur.N;
-            maxT = form1.getTextBox8();
-            Scale = 150;
-            maxV = 2;
+            Scale = int.Parse(form1.textBox12.Text.Trim());
+            maxT = int.Parse(form1.textBox8.Text.Trim());
+            maxV = int.Parse(form1.textBox10.Text.Trim());
+            Pc = double.Parse(form1.textBox5.Text.Trim());
+            Pm = double.Parse(form1.textBox9.Text.Trim());
+            Pw = double.Parse(form1.textBox11.Text.Trim());
             lastGroup = new int[Scale + 1][];
             newGroup = new int[Scale + 1][];
             for (int i = 0; i < Scale; ++i)
@@ -353,7 +349,7 @@ namespace VehicleRoutingProblem
         /// 
         /// </summary>
         /// <param name="form1"></param>
-        internal void run(Form1 form1)
+        internal override void run(Form1 form1)
         {
             TimeSpan ts1 = new TimeSpan(DateTime.Now.Ticks);
             for (int t = 0; t < maxT; ++t)
@@ -390,12 +386,13 @@ namespace VehicleRoutingProblem
 
             bestEvalution = 10.0 / bestFitness;// Evaluate(bestGen, out bestplan);
             form1.textBox4.Text = bestplan[0].ToString();
-            form1.textBox5.Text = "";
+            form1.listBox4.Items.Clear();
             for (int i = 1, j = 1; i <= bestplan[0]; ++i)
             {
+                string tmp = "";
                 for (; j <= bestplan[i]; ++j)
-                    form1.textBox5.Text += bestGen[j].ToString() + " ";
-                form1.textBox5.Text += "| ";
+                    tmp += bestGen[j].ToString() + " ";
+                form1.listBox4.Items.Add(tmp);
             }
             form1.textBox6.Text = bestEvalution.ToString();
 
@@ -423,5 +420,6 @@ namespace VehicleRoutingProblem
             form1.progressBar1.Value = 100;
 
         }
+
     }
 }

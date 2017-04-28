@@ -13,7 +13,6 @@ namespace VehicleRoutingProblem
     partial class Form1 : Form
     {
         public static MapData mapCur;
-        public static int Scale;
         public Form1()
         {
             InitializeComponent();
@@ -47,23 +46,27 @@ namespace VehicleRoutingProblem
             listBox1.Items.Clear();
             listBox2.Items.Clear();
             listBox3.Items.Clear();
+            listBox4.Items.Clear();
 
             textBox1.Text = "";
             textBox2.Text = "";
             textBox3.Text = "";
             textBox4.Text = "";
-            textBox5.Text = "";
             textBox6.Text = "";
             textBox7.Text = "";
         }
         private void button1_Click(object sender, EventArgs e)
         {
+            GABase solve;
             init();
             progressBar1.Value = 0;//进度条归零
                                    //Scale = int.Parse(textBox8.Text);
 
             //初始化
-            cGA solve = new cGA();
+            if (comboBox2.Text.Trim() == "遗传算法(GA)")
+                solve = new GA();
+            else
+                solve = new cGA();
             solve.initialize(this);
             solve.run(this);
             //solve.maxT = int.Parse(textBox8.Text);
@@ -71,10 +74,6 @@ namespace VehicleRoutingProblem
         internal void setTextBox8(int x)
         {
             textBox8.Text = x.ToString();
-        }
-        internal int getTextBox8()
-        {
-            return int.Parse(textBox8.Text);
         }
     }
 }

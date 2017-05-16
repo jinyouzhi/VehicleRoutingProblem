@@ -6,8 +6,8 @@ namespace VehicleRoutingProblem
     {
         static int maxL = 100;
 
-        static Random ra;//随机
-        int N;//地点数量
+        //static Random ra;//随机
+        //int N;//地点数量
         int ScaleN;//种群规模-棋盘边长
         int maxT;//繁衍代数
 
@@ -28,20 +28,6 @@ namespace VehicleRoutingProblem
 
         double[][] Fitness;//适应度
         //double[][] Pi;//累计概率
-
-        /// <summary>
-        /// 交换函数，交换两个int
-        /// </summary>
-        /// <param name="i">A</param>
-        /// <param name="j">B</param>
-        /// <returns></returns>
-        public static bool swap(ref int i, ref int j)
-        {
-            i ^= j;
-            j ^= i;
-            i ^= j;
-            return true;
-        }
 
         /// <summary>
         /// 初始化染色体，洗牌算法
@@ -140,138 +126,6 @@ namespace VehicleRoutingProblem
                 }
         }
 
-        ///
-        void OXCross(ref int[] F1, ref int[] F2)
-        {
-            int ran1, ran2;
-            int flag;
-            int[] S1 = new int[N + 1], S2 = new int[N + 1];
-            ran1 = 1 + ra.Next(0, 65535) % N;
-            do
-            {
-                ran2 = 1 + ra.Next(0, 65535) % N;
-            } while (ran2 == ran1);
-
-            if (ran1 > ran2)
-            {
-                swap(ref ran1, ref ran2);
-            }
-
-
-            flag = ran2 - ran1 + 1;//删除重复基因前染色体长度
-
-            for (int i = 1, j = ran1; i <= flag; i++, j++)
-            {
-                S1[i] = F2[j];
-                S2[i] = F1[j];
-            }
-            //已近赋值i=ran2-ran1个基因
-
-
-            for (int k = 1, j = flag + 1; j <= N; j++)//染色体长度
-            {
-            Lab3:
-                S1[j] = F1[k++];
-                for (int i = 1; i <= flag; i++)
-                { if (S1[i] == S1[j]) goto Lab3; }
-            }
-
-            for (int k = 1, j = flag + 1; j <= N; j++)//染色体长度
-            {
-            Lab4:
-                S2[j] = F2[k++];
-                for (int i = 1; i <= flag; i++)
-                { if (S2[i] == S2[j]) goto Lab4; }
-            }
-            F1 = S1;
-            F2 = S2;
-        }
-
-        /// <summary>
-        /// 逆转变异算子
-        /// </summary>
-        /// <param name="F"></param>
-        void RevVariation(ref int[] F)
-        {
-            int ran1, ran2;
-            ran1 = 1 + ra.Next(0, 65535) % N;
-            do
-            {
-                ran2 = 1 + ra.Next(0, 65535) % N;
-            } while (ran2 == ran1);
-
-            if (ran1 > ran2)
-            {
-                swap(ref ran1, ref ran2);
-            }
-            int flag = ran2 - ran1 + 1;//逆转部分长度
-
-            for (int i = 0; i < flag/2; i++)
-                swap(ref F[ran1 + i], ref F[ran2 - i]);
-        }
-
-        void OnCVariation(ref int[] F)
-        {
-            int ran1, ran2;
-            int count = 1 + ra.Next(0, 65535) % N;
-            for (int i = 1; i <= count; ++i)
-            {
-                ran1 = 1 + ra.Next(0, 65535) % N;
-                do
-                {
-                    ran2 = 1 + ra.Next(0, 65535) % N;
-                } while (ran1 == ran2);
-                swap(ref F[ran1], ref F[ran2]);
-            }
-        }
-
-        /// <summary>
-        /// 顺序逆转交叉算子(小生境技术——朱大林文）
-        /// </summary>
-        /// <param name="F1">父代1</param>
-        /// <param name="F2">父代2</param>
-        /// <returns>子代</returns>
-        int[] ORXCross(ref int[] F1, ref int[] F2)
-        {
-            int ran1, ran2;
-            int[] rep1 = new int[N + 1], rep2 = new int[N + 1];
-            int[] S1 = new int[N + 1], S2 = new int[N + 1];
-            ran1 = 1 + ra.Next(0, 65535) % N;
-            do
-            {
-                ran2 = 1 + ra.Next(0, 65535) % N;
-            } while (ran2 == ran1);
-
-            if (ran1 > ran2)
-            {
-                swap(ref ran1, ref ran2);
-            }
-
-            //交叉部分
-            for (int i = ran1; i <= ran2; ++i)
-            {
-                S1[i] = F2[i];
-                rep1[S1[i]] = 1;
-                S2[i] = F1[i];
-                rep2[S2[i]] = 1;
-            }
-
-            //逆转部分
-            for (int i = 1, j1 = N, j2 =N; i <= N; i++)
-            {
-                if (i == ran1)
-                {
-                    i = ran2;
-                    continue;
-                }
-                while (rep1[F1[j1]] > 0) --j1;
-                S1[i] = F1[j1--];
-                while (rep2[F2[j2]] > 0) --j2;
-                S2[i] = F1[j2--];
-            }
-            return S1;
-        }
-
         static int[,] dir = { { -1,1}, { 0,1}, { 1,1}, { 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, -1 }, { -1, 0 } };
         /// <summary>
         /// 进化函数
@@ -325,8 +179,8 @@ namespace VehicleRoutingProblem
                     {
                         //否则按一定概率变异
                         rand = ra.Next(0, 65535) % 1000 / 1000.0;
-                        //if (rand < Pm)
-                        //    RevVariation(ref curGroup[i][j]);
+                        if (rand < Pm)
+                            variation(ref curGroup[i][j]);
                     }
                 }
             }

@@ -10,8 +10,8 @@ namespace VehicleRoutingProblem
     {
         static int maxL = 100;
 
-        static Random ra;//随机
-        int N;//地点数量
+        //static Random ra;//随机
+        //int N;//地点数量
         int Scale;//种群规模
         int maxT;//繁衍代数
 
@@ -33,20 +33,6 @@ namespace VehicleRoutingProblem
 
         double[] Fitness;//适应度
         double[] Pi;//累计概率
-
-        /// <summary>
-        /// 交换函数，交换两个int
-        /// </summary>
-        /// <param name="i">A</param>
-        /// <param name="j">B</param>
-        /// <returns></returns>
-        public static bool swap(ref int i, ref int j)
-        {
-            i ^= j;
-            j ^= i;
-            i ^= j;
-            return true;
-        }
 
         /// <summary>
         /// 初始化染色体，洗牌算法
@@ -220,60 +206,6 @@ namespace VehicleRoutingProblem
             }
             return ra.Next(0, 65535) % Scale;
         }
-        ///
-        void OXCross(ref int[] F1, ref int[] F2)
-        {
-            int ran1, ran2;
-            int flag;
-            int[] S1 = new int[maxL], S2 = new int[maxL];
-            ran1 = 1 + ra.Next(0, 65535) % N;
-            do
-            {
-                ran2 = 1 + ra.Next(0, 65535) % N;
-            } while (ran2 == ran1);
-            if (ran1 > ran2)
-            {
-                swap(ref ran1, ref ran2);
-            }
-            flag = ran2 - ran1 + 1;//删除重复基因前染色体长度
-            for (int i = 1, j = ran1; i <= flag; i++, j++)
-            {
-                S1[i] = F2[j];
-                S2[i] = F1[j];
-            }
-            //已近赋值i=ran2-ran1个基因
-            for (int k = 1, j = flag + 1; j <= N; j++)//染色体长度
-            {
-            Lab3:
-                S1[j] = F1[k++];
-                for (int i = 1; i <= flag; i++)
-                { if (S1[i] == S1[j]) goto Lab3; }
-            }
-            for (int k = 1, j = flag + 1; j <= N; j++)//染色体长度
-            {
-            Lab4:
-                S2[j] = F2[k++];
-                for (int i = 1; i <= flag; i++)
-                { if (S2[i] == S2[j]) goto Lab4; }
-            }
-            F1 = S1;
-            F2 = S2;
-        }
-
-        void OnCVariation(ref int[] F)
-        {
-            int ran1, ran2;
-            int count = 1 + ra.Next(0, 65535) % N;
-            for (int i = 1; i <= count; ++i)
-            {
-                ran1 = 1 +  ra.Next(0, 65535) % N;
-                do
-                {
-                    ran2 = 1 + ra.Next(0, 65535) % N;
-                } while (ran1 == ran2);
-                swap(ref F[ran1], ref F[ran2]);
-            }
-        }
 
         /// <summary>
         /// 进化函数
@@ -295,11 +227,11 @@ namespace VehicleRoutingProblem
                 {
                     rand = ra.Next(0, 65535) % 1000 / 1000.0;
                     if (rand < Pm)
-                        OnCVariation(ref newGroup[k]);
+                        variation(ref newGroup[k]);
 
                     rand = ra.Next(0, 65535) % 1000 / 1000.0;
                     if (rand < Pm)
-                        OnCVariation(ref newGroup[k + 1]);
+                        variation(ref newGroup[k + 1]);
 
                 }
             }

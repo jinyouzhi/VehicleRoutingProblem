@@ -74,6 +74,8 @@
             this.label17 = new System.Windows.Forms.Label();
             this.textBox12 = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
+            this.comboBox4 = new System.Windows.Forms.ComboBox();
+            this.label19 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -246,7 +248,7 @@
             this.comboBox2.Items.AddRange(new object[] {
             "遗传算法(GA)",
             "元胞遗传算法(cGA)"});
-            this.comboBox2.Location = new System.Drawing.Point(1007, 305);
+            this.comboBox2.Location = new System.Drawing.Point(1007, 280);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(163, 23);
             this.comboBox2.TabIndex = 123;
@@ -255,7 +257,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(919, 308);
+            this.label11.Location = new System.Drawing.Point(919, 283);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(67, 15);
             this.label11.TabIndex = 124;
@@ -295,7 +297,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(919, 277);
+            this.label10.Location = new System.Drawing.Point(919, 252);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(67, 15);
             this.label10.TabIndex = 129;
@@ -303,7 +305,7 @@
             // 
             // textBox8
             // 
-            this.textBox8.Location = new System.Drawing.Point(1007, 274);
+            this.textBox8.Location = new System.Drawing.Point(1007, 249);
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(163, 25);
             this.textBox8.TabIndex = 130;
@@ -339,7 +341,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(918, 337);
+            this.label12.Location = new System.Drawing.Point(918, 312);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(67, 15);
             this.label12.TabIndex = 134;
@@ -357,15 +359,19 @@
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "随机变异算子",
+            "逆转变异算子"});
             this.comboBox1.Location = new System.Drawing.Point(1007, 394);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(163, 23);
             this.comboBox1.TabIndex = 136;
+            this.comboBox1.Text = "随机变异算子";
             // 
             // comboBox3
             // 
             this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(1007, 334);
+            this.comboBox3.Location = new System.Drawing.Point(1007, 309);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(163, 23);
             this.comboBox3.TabIndex = 137;
@@ -409,7 +415,7 @@
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(1007, 363);
+            this.textBox5.Location = new System.Drawing.Point(1007, 364);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(163, 25);
             this.textBox5.TabIndex = 141;
@@ -474,11 +480,34 @@
             this.label18.TabIndex = 147;
             this.label18.Text = "种群规模";
             // 
+            // comboBox4
+            // 
+            this.comboBox4.FormattingEnabled = true;
+            this.comboBox4.Items.AddRange(new object[] {
+            "静态",
+            "改进"});
+            this.comboBox4.Location = new System.Drawing.Point(1007, 337);
+            this.comboBox4.Name = "comboBox4";
+            this.comboBox4.Size = new System.Drawing.Size(163, 23);
+            this.comboBox4.TabIndex = 150;
+            this.comboBox4.Text = "静态";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(918, 341);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(67, 15);
+            this.label19.TabIndex = 149;
+            this.label19.Text = "概率方式";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 753);
+            this.Controls.Add(this.comboBox4);
+            this.Controls.Add(this.label19);
             this.Controls.Add(this.textBox12);
             this.Controls.Add(this.label18);
             this.Controls.Add(this.textBox11);
@@ -579,6 +608,8 @@
         private System.Windows.Forms.Label label17;
         internal System.Windows.Forms.TextBox textBox12;
         private System.Windows.Forms.Label label18;
+        internal System.Windows.Forms.ComboBox comboBox4;
+        private System.Windows.Forms.Label label19;
     }
 }
 

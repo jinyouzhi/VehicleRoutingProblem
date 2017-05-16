@@ -67,6 +67,11 @@ namespace VehicleRoutingProblem
                 solve = new GA();
             else
                 solve = new cGA();
+
+            if (comboBox1.Text.Trim() == "随机变异算子")
+                solve.variation = solve.OnCVariation;
+            else
+                solve.variation = solve.RevVariation;
             solve.initialize(this);
             solve.run(this);
             //solve.maxT = int.Parse(textBox8.Text);

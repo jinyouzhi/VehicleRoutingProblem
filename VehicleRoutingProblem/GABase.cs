@@ -10,6 +10,8 @@ namespace VehicleRoutingProblem
     {
         internal static Random ra;//随机
         internal int N;//地点数量
+        public int selectPolicy;//0轮盘赌1精英轮盘赌2最优个体
+        public int PcMethod;//0静态1自适应
 
         /// <summary>
         /// 交换函数，交换两个int
@@ -30,7 +32,7 @@ namespace VehicleRoutingProblem
         /// </summary>
         /// <param name="F1"></param>
         /// <param name="F2"></param>
-        internal void OXCross(ref int[] F1, ref int[] F2)
+        internal int[] OXCross(ref int[] F1, ref int[] F2, double rate = 0.0)
         {
             int ran1, ran2;
             int flag;
@@ -71,20 +73,24 @@ namespace VehicleRoutingProblem
                 for (int i = 1; i <= flag; i++)
                 { if (S2[i] == S2[j]) goto Lab4; }
             }
-            F1 = S1;
-            F2 = S2;
+            if (this.GetType() == typeof(GA))
+            {
+                F1 = S1;
+                F2 = S2;
+            }
+            return S1;
         }
    
         /// <summary>
-        /// 改进型变长逆转交叉函数，随机交换L比例长度
+        /// 改进型变长逆转交叉算子，随机交换L比例长度
         /// </summary>
         /// <param name="F1">父本1</param>
         /// <param name="F2">父本2</param>
         /// <param name="L">交换长度比例</param>
         /// <returns>生成的子代</returns>
-        internal int[] NewOXCROSS(ref int[] F1, ref int[] F2, double rate)
+        internal int[] NewOXCROSS(ref int[] F1, ref int[] F2, double rate = 0.0)
         {
-            int L = (int)(rate * F1.Length);
+            int L = (int)(rate * N);
 
             int ran1, ran2;
             int[] rep1 = new int[N + 1], rep2 = new int[N + 1];
@@ -113,6 +119,11 @@ namespace VehicleRoutingProblem
                 while (rep2[F2[j2]] > 0) --j2;
                 S2[i] = F1[j2--];
             }
+            if (this.GetType() == typeof(GA))
+            {
+                F1 = S1;
+                F2 = S2;
+            }
             return S1;
         }
 
@@ -122,7 +133,7 @@ namespace VehicleRoutingProblem
         /// <param name="F1">父代1</param>
         /// <param name="F2">父代2</param>
         /// <returns>子代</returns>
-        internal int[] ORXCross(ref int[] F1, ref int[] F2)
+        internal int[] ORXCross(ref int[] F1, ref int[] F2, double rate = 0.0)
         {
             int ran1, ran2;
             int[] rep1 = new int[N + 1], rep2 = new int[N + 1];
@@ -159,6 +170,11 @@ namespace VehicleRoutingProblem
                 S1[i] = F1[j1--];
                 while (rep2[F2[j2]] > 0) --j2;
                 S2[i] = F1[j2--];
+            }
+            if (this.GetType() == typeof(GA))
+            {
+                F1 = S1;
+                F2 = S2;
             }
             return S1;
         }
@@ -206,6 +222,8 @@ namespace VehicleRoutingProblem
         }
         public delegate void Variation(ref int[] F);
         public Variation variation;
+        public delegate int[] Cross(ref int[] F1, ref int[]F2, double rate);
+        public Cross cross;
         abstract internal void run(Form1 form1);
         internal abstract void initialize(Form1 form1);
     }

@@ -35,12 +35,7 @@ namespace VehicleRoutingProblem
         {
 
         }
-
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-        }
-
+        
         void init()
         {
             listBox1.Items.Clear();
@@ -68,10 +63,29 @@ namespace VehicleRoutingProblem
             else
                 solve = new cGA();
 
+            if (comboBox3.Text.Trim() == "改进型变长逆转交叉算子")
+                solve.cross = solve.NewOXCROSS;
+            else if (comboBox3.Text.Trim() == "随机交叉算子")
+                solve.cross = solve.OXCross;
+            else
+                solve.cross = solve.ORXCross;
+
             if (comboBox1.Text.Trim() == "随机变异算子")
                 solve.variation = solve.OnCVariation;
             else
                 solve.variation = solve.RevVariation;
+
+            if (comboBox4.Text.Trim() == "轮盘赌")
+                solve.selectPolicy = 0;
+            else if (comboBox4.Text.Trim() == "精英轮盘赌")
+                solve.selectPolicy = 1;
+            else
+                solve.selectPolicy = 2;
+
+            if (comboBox5.Text.Trim() == "静态概率")
+                solve.PcMethod = 0;
+            else
+                solve.PcMethod = 1;
             solve.initialize(this);
             solve.run(this);
             //solve.maxT = int.Parse(textBox8.Text);

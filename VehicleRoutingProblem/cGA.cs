@@ -126,7 +126,7 @@ namespace VehicleRoutingProblem
                 }
         }
 
-        static int[,] dir = { { -1,1}, { 0,1}, { 1,1}, { 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, -1 }, { -1, 0 } };
+        static int[,] dir = { { -1,1}, { 0,1}, { 1,1}, { 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, -1 }, { -1, 0 } , { 0, 0 } };
         /// <summary>
         /// 进化函数
         /// </summary>
@@ -150,15 +150,40 @@ namespace VehicleRoutingProblem
                 for (int j = 1; j < ScaleN - 1; j++)
                 {
                     sumVal = 0;
-                    for (int k = 0; k < 8; k++)
-                        sumVal += Fitness[i + dir[k, 0]][j + dir[k, 1]];
-                    Pi[0] = Fitness[i + dir[0, 0]][j + dir[0, 1]] / sumVal;
+                    //精英轮盘赌
+                    for (int k = 0; k < 8; ++k)
+                        if (Fitness[i + dir[k, 0]][j + dir[k, 1]] >= Fitness[i][j])
+                            sumVal += Fitness[i + dir[k, 0]][j + dir[k, 1]];
+
+                    //for (int k = 0; k < 8; k++)
+                    //    sumVal += Fitness[i + dir[k, 0]][j + dir[k, 1]];
+                    //Pi[0] = Fitness[i + dir[0, 0]][j + dir[0, 1]] / sumVal;
+                    //for (int k = 1; k < 8; k++)
+                    //    Pi[k] = Pi[k - 1] + Fitness[i + dir[k, 0]][j + dir[k, 1]] / sumVal;
+                    if (Fitness[i + dir[0, 0]][j + dir[0, 1]] >= Fitness[i][j])
+                        Pi[0] = Fitness[i + dir[0, 0]][j + dir[0, 1]] / sumVal;
+                    else
+                        Pi[0] = 0.0;
                     for (int k = 1; k < 8; k++)
-                        Pi[k] = Pi[k - 1] + Fitness[i + dir[k, 0]][j + dir[k, 1]] / sumVal;
+                        if (Fitness[i + dir[k, 0]][j + dir[k, 1]] >= Fitness[i][j])
+                            Pi[k] = Pi[k - 1] + Fitness[i + dir[k, 0]][j + dir[k, 1]] / sumVal;
+                        else
+                            Pi[k] = 0.0;
 
                     //轮盘赌
+                    //rand = ra.Next(0, 65535) % 1000 / 1000.0;
+                    //hit = ra.Next(0, 65535) % 8;//随机作为默认，无法命中时作为结果
+                    //for (int k = 0; k < 8; ++k)
+                    //{
+                    //    if (rand < Pi[k])
+                    //    {
+                    //        hit = k;
+                    //        break;
+                    //    }
+                    //}
+                    //精英轮盘赌
                     rand = ra.Next(0, 65535) % 1000 / 1000.0;
-                    hit = ra.Next(0, 65535) % 8;//随机作为默认，无法命中时作为结果
+                    hit = 8;
                     for (int k = 0; k < 8; ++k)
                     {
                         if (rand < Pi[k])
@@ -167,8 +192,8 @@ namespace VehicleRoutingProblem
                             break;
                         }
                     }
-
-                    newS = ORXCross(ref curGroup[i][j], ref curGroup[i + dir[hit, 0]][j + dir[hit, 1]]);
+                    double p = (PcMethod == 1) ? (Pc + (1 - Pc)*((Fitness[i + dir[hit, 0]][j + dir[hit, 1]] - Fitness[i][j]) /(Fitness[i + dir[hit, 0]][j + dir[hit,1]] - Fitness[i][j]*Pc))) : (Pc);
+                    newS = cross(ref curGroup[i][j], ref curGroup[i + dir[hit, 0]][j + dir[hit, 1]], p);
                     newFitness = Evaluate(newS, out newPlan);
                     if (newFitness > Fitness[i][j])//新子代如果更优替代中心元胞
                     {

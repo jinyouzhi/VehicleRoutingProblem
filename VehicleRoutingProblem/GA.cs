@@ -221,8 +221,11 @@ namespace VehicleRoutingProblem
             for (k = 1; k + 1 < Scale; k += 2)
             {
                 rand = ra.Next(0, 65535) % 1000 / 1000.0;
-                if (rand < Pc)
-                    OXCross(ref newGroup[k], ref newGroup[k + 1]);
+                double p = (PcMethod == 1) ? (Pc + (1 - Pc) * ((Fitness[k + 1] - Fitness[k]) / (Fitness[k + 1] - Fitness[k]* Pc))) : (Pc);
+                if (rand < p)
+                {
+                    cross(ref newGroup[k], ref newGroup[k + 1], p);
+                }
                 else
                 {
                     rand = ra.Next(0, 65535) % 1000 / 1000.0;

@@ -10,12 +10,17 @@ using System.Windows.Forms;
 
 namespace VehicleRoutingProblem
 {
-    partial class Form1 : Form
+    partial class MainForm : Form
     {
+        public static MainForm mainForm;
         public static MapData mapCur;
-        public Form1()
+        bool ok = false;//初始化标志
+        bool load = false;//载入标志
+        GABase solve;
+        public MainForm()
         {
             InitializeComponent();
+            mainForm = this;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -27,21 +32,23 @@ namespace VehicleRoutingProblem
                 mapCur = Map.initFileMap(sr);
                 //MessageBox.Show(sr.ReadToEnd());
                 sr.Close();
-
+                ok = false;
+                load = true;
+            }
+            else
+            {
+                load = false;
             }
         }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-
-        }
         
+
         void init()
         {
+            progressBar1.Value = 0;//进度条归零
+                                   //Scale = int.Parse(textBox8.Text);
             listBox1.Items.Clear();
             listBox2.Items.Clear();
             listBox3.Items.Clear();
-            listBox4.Items.Clear();
 
             textBox1.Text = "";
             textBox2.Text = "";
@@ -49,13 +56,6 @@ namespace VehicleRoutingProblem
             textBox4.Text = "";
             textBox6.Text = "";
             textBox7.Text = "";
-        }
-        private void button1_Click(object sender, EventArgs e)
-        {
-            GABase solve;
-            init();
-            progressBar1.Value = 0;//进度条归零
-                                   //Scale = int.Parse(textBox8.Text);
 
             //初始化
             if (comboBox2.Text.Trim() == "遗传算法(GA)")
@@ -75,9 +75,9 @@ namespace VehicleRoutingProblem
             else
                 solve.variation = solve.RevVariation;
 
-            if (comboBox4.Text.Trim() == "轮盘赌")
+            if (comboBox4.Text.Trim() == "轮盘赌(GA)")
                 solve.selectPolicy = 0;
-            else if (comboBox4.Text.Trim() == "精英轮盘赌")
+            else if (comboBox4.Text.Trim() == "精英轮盘赌(cGA)")
                 solve.selectPolicy = 1;
             else
                 solve.selectPolicy = 2;
@@ -86,13 +86,37 @@ namespace VehicleRoutingProblem
                 solve.PcMethod = 0;
             else
                 solve.PcMethod = 1;
-            solve.initialize(this);
-            solve.run(this);
+
+            if (!load)
+            {
+                MessageBox.Show("请先载入数据!");
+                return;
+            }
+            solve.initialize();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //判断是否初始化
+            if (!ok)
+            { 
+                init();
+                ok = true;
+            }
+            solve.run();
+            ok = false;
             //solve.maxT = int.Parse(textBox8.Text);
         }
         internal void setTextBox8(int x)
         {
             textBox8.Text = x.ToString();
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            init();
+            ok = true;
+        }
+
     }
 }

@@ -224,7 +224,7 @@ namespace VehicleRoutingProblem
         public Variation variation;
         public delegate int[] Cross(ref int[] F1, ref int[]F2, double rate);
         public Cross cross;
-        abstract internal void run(Form1 form1);
-        internal abstract void initialize(Form1 form1);
+        abstract internal void run();
+        internal abstract void initialize();
     }
 }

@@ -68,8 +68,8 @@ namespace VehicleRoutingProblem
         double Evaluate(int[] Gen, out int[] res)
         {
             res = new int[N + 1];
-            double curWeight = Form1.mapCur.Goods[Gen[1]];
-            double curDistance = Form1.mapCur.Roads[0][Gen[1]];
+            double curWeight = MainForm.mapCur.Goods[Gen[1]];
+            double curDistance = MainForm.mapCur.Roads[0][Gen[1]];
             double evalution = 0;
             res[1] = 1;
             //车辆数量
@@ -78,17 +78,17 @@ namespace VehicleRoutingProblem
             int flag = 0;
             for (int j = 2; j <= N; ++j)
             {
-                curDistance += Form1.mapCur.Roads[Gen[j]][Gen[j - 1]];
-                curWeight += Form1.mapCur.Goods[Gen[j]];
+                curDistance += MainForm.mapCur.Roads[Gen[j]][Gen[j - 1]];
+                curWeight += MainForm.mapCur.Goods[Gen[j]];
 
                 //如果载重不足或者不够回程
-                if (curWeight > Form1.mapCur.MaxWeight || curDistance + Form1.mapCur.Roads[Gen[j]][0] > Form1.mapCur.MaxDistance)
+                if (curWeight > MainForm.mapCur.MaxWeight || curDistance + MainForm.mapCur.Roads[Gen[j]][0] > MainForm.mapCur.MaxDistance)
                 {
                     ++v;//起用下一辆车
                     res[v] = res[v - 1] + 1;
-                    evalution += curDistance + Form1.mapCur.Roads[Gen[j - 1]][0] - Form1.mapCur.Roads[Gen[j]][Gen[j - 1]];
-                    curDistance = Form1.mapCur.Roads[0][Gen[j]];
-                    curWeight = Form1.mapCur.Goods[Gen[j]];
+                    evalution += curDistance + MainForm.mapCur.Roads[Gen[j - 1]][0] - MainForm.mapCur.Roads[Gen[j]][Gen[j - 1]];
+                    curDistance = MainForm.mapCur.Roads[0][Gen[j]];
+                    curWeight = MainForm.mapCur.Goods[Gen[j]];
                 }
                 else
                 {
@@ -96,7 +96,7 @@ namespace VehicleRoutingProblem
                 }
             }
             //加上最后一段回程
-            evalution += curDistance + Form1.mapCur.Roads[Gen[N]][0];
+            evalution += curDistance + MainForm.mapCur.Roads[Gen[N]][0];
 
             res[0] = v;
             flag = v - maxV;//超额车辆
@@ -215,17 +215,16 @@ namespace VehicleRoutingProblem
         /// <summary>
         /// 初始化
         /// </summary>
-        /// <param name="form1">窗体，用于读取更改窗体数据</param>
-        internal override void initialize(Form1 form1)
+        internal override void initialize()
         {
             ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
-            N = Form1.mapCur.N;
-            ScaleN = (int)(Math.Ceiling(Math.Sqrt(double.Parse(form1.textBox12.Text.Trim()))));
-            maxT = int.Parse(form1.textBox8.Text.Trim());
-            maxV = int.Parse(form1.textBox10.Text.Trim());
-            Pc = double.Parse(form1.textBox5.Text.Trim());
-            Pm = double.Parse(form1.textBox9.Text.Trim());
-            Pw = double.Parse(form1.textBox11.Text.Trim());
+            N = MainForm.mapCur.N;
+            ScaleN = (int)(Math.Ceiling(Math.Sqrt(double.Parse(MainForm.mainForm.textBox12.Text.Trim()))));
+            maxT = int.Parse(MainForm.mainForm.textBox8.Text.Trim());
+            maxV = int.Parse(MainForm.mainForm.textBox10.Text.Trim());
+            Pc = double.Parse(MainForm.mainForm.textBox5.Text.Trim());
+            Pm = double.Parse(MainForm.mainForm.textBox9.Text.Trim());
+            Pw = double.Parse(MainForm.mainForm.textBox11.Text.Trim());
             curGroup = new int[ScaleN][][];
             for (int i = 0; i < ScaleN; ++i)
             {
@@ -252,20 +251,19 @@ namespace VehicleRoutingProblem
             }
             bestplan = new int[N + 1];
 
-            form1.listBox1.Items.Clear();
+            MainForm.mainForm.listBox1.Items.Clear();
             for (int i = 0; i < ScaleN; ++i)//生成初始种群
                 for (int j = 0; j < ScaleN; j++)      
             {
                 curGroup[i][j] = randGroup();
-                form1.listBox1.Items.Add(getNum(curGroup[i][j]));
+                MainForm.mainForm.listBox1.Items.Add(getNum(curGroup[i][j]));
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="form1"></param>
-        internal override void run(Form1 form1)
+        internal override void run()
         {
             TimeSpan ts1 = new TimeSpan(DateTime.Now.Ticks);
             for (int t = 0; t < maxT; ++t)
@@ -277,46 +275,46 @@ namespace VehicleRoutingProblem
 
                 //Array.Copy(lastGroup, newGroup, lastGroup.Length);
 
-                form1.progressBar1.Value = t * 100 / maxT;
+                MainForm.mainForm.progressBar1.Value = t * 100 / maxT;
             }
             updateBestGen(maxT);
 
             TimeSpan ts2 = new TimeSpan(DateTime.Now.Ticks);
             TimeSpan ts = ts2.Subtract(ts1).Duration();
             //时间差的绝对值 
-            form1.textBox7.Text = "运行时间：" + ts.TotalMilliseconds.ToString();
+            MainForm.mainForm.textBox7.Text = "运行时间：" + ts.TotalMilliseconds.ToString();
 
             //出现代数
-            form1.textBox1.Text = bestT.ToString() + " 代";
+            MainForm.mainForm.textBox1.Text = bestT.ToString() + " 代";
             //染色体评价值
-            form1.textBox2.Text = bestFitness.ToString();
+            MainForm.mainForm.textBox2.Text = bestFitness.ToString();
 
             //最好的染色体
             string s11 = "";
             for (int i = 1; i <= N; i++)
                 s11 = s11 + " " + bestGen[i].ToString();
-            form1.textBox3.Text = s11;
+            MainForm.mainForm.textBox3.Text = s11;
 
-            form1.listBox2.Items.Clear();
+            MainForm.mainForm.listBox2.Items.Clear();
             for (int i = 0; i < ScaleN; ++i)
                 for (int j = 0; j < ScaleN; ++j)
-                    form1.listBox2.Items.Add(getNum(curGroup[i][j]));
+                    MainForm.mainForm.listBox2.Items.Add(getNum(curGroup[i][j]));
 
             bestEvalution = 10.0 / bestFitness;// Evaluate(bestGen, out bestplan);
-            form1.textBox4.Text = bestplan[0].ToString();
-            form1.listBox4.Items.Clear();
+            MainForm.mainForm.textBox4.Text = bestplan[0].ToString();
+            MainForm.mainForm.listBox3.Items.Clear();
             for (int i = 1, j = 1; i <= bestplan[0]; ++i)
             {
                 string tmp = "";
                 for (; j <= bestplan[i]; ++j)
                     tmp += bestGen[j].ToString() + " ";
-                form1.listBox4.Items.Add(tmp);
+                MainForm.mainForm.listBox3.Items.Add(tmp);
             }
-            form1.textBox6.Text = bestEvalution.ToString();
+            MainForm.mainForm.textBox6.Text = bestEvalution.ToString();
 
 
-
-            form1.progressBar1.Value = 100;
+            GraphView.GenerateGraph(N, bestplan, bestGen);
+            MainForm.mainForm.progressBar1.Value = 100;
 
         }
     }

@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="VehicleRoutingProblem.GraphView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:isom="clr-namespace:GraphSharp.Algorithms.Layout.Simple.FDP;assembly=GraphSharp"
+             xmlns:local="clr-namespace:VehicleRoutingProblem"
+             xmlns:graphsharp="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
+             xmlns:zoom="clr-namespace:GraphSharp.Controls.Zoom;assembly=GraphSharp.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="584" d:DesignWidth="530">
+    <Grid>
+        <Grid.Resources>
+            <local:EdgeColorConverter x:Key="edgeToEdgeColorConverter"/>
+            <Style TargetType="{x:Type graphsharp:EdgeControl}">
+                <Style.Setters>
+                    <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource Self},Path=Edge.EdgeColor,Converter={StaticResource edgeToEdgeColorConverter}}"/>
+                    <Setter Property="ToolTip" Value="{Binding ID}"/>
+                </Style.Setters>
+                <Style.Resources>
+                    <ToolTip x:Key="ToolTipContent">
+                        <StackPanel>
+                            <TextBlock x:Name="textBlock" Text="AAAAA"/>
+                            <TextBlock Text="{Binding ID}"/>
+                        </StackPanel>
+                    </ToolTip>
+                </Style.Resources>
+            </Style>
+        </Grid.Resources>
+
+        <zoom:ZoomControl>
+            <local:VGraphLayout x:Name="Layout" 
+                            LayoutAlgorithmType="ISOM" 
+                            OverlapRemovalAlgorithmType="FSA" 
+                            Graph="{Binding}" 
+                            AsyncCompute="true" 
+                            ShowAllStates="false" 
+                            HighlightAlgorithmType="Simple"
+        >
+                <local:VGraphLayout.LayoutParameters>
+                    <isom:ISOMLayoutParameters Width="530" Height="584" />
+                </local:VGraphLayout.LayoutParameters>
+            </local:VGraphLayout>
+        </zoom:ZoomControl>
+
+    </Grid>
+</UserControl>

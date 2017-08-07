@@ -78,7 +78,10 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
             this.graphView1 = new VehicleRoutingProblem.GraphView();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.textBox13 = new System.Windows.Forms.TextBox();
             this.groupBox2.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // progressBar1
@@ -222,14 +225,15 @@
             // 
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Items.AddRange(new object[] {
-            "元胞遗传算法(cGA)",
+            "元胞遗传Moore型(cGA9)",
+            "元胞遗传扩展Moore型(cGA25)",
             "遗传算法(GA)"});
             this.comboBox2.Location = new System.Drawing.Point(753, 357);
             this.comboBox2.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(124, 20);
             this.comboBox2.TabIndex = 123;
-            this.comboBox2.Text = "元胞遗传算法(cGA)";
+            this.comboBox2.Text = "元胞遗传Moore型(cGA9)";
             // 
             // textBox7
             // 
@@ -246,7 +250,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(5, 41);
+            this.button2.Location = new System.Drawing.Point(5, 14);
             this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(115, 23);
@@ -323,12 +327,12 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(5, 13);
+            this.button3.Location = new System.Drawing.Point(5, 41);
             this.button3.Margin = new System.Windows.Forms.Padding(2);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(115, 23);
             this.button3.TabIndex = 128;
-            this.button3.Text = "随机初始种群";
+            this.button3.Text = "初始化";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
@@ -553,6 +557,26 @@
             this.elementHost1.Text = "elementHost1";
             this.elementHost1.Child = this.graphView1;
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.textBox13);
+            this.groupBox4.Location = new System.Drawing.Point(548, 308);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(125, 181);
+            this.groupBox4.TabIndex = 159;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "运行记录";
+            // 
+            // textBox13
+            // 
+            this.textBox13.BackColor = System.Drawing.SystemColors.Window;
+            this.textBox13.Location = new System.Drawing.Point(6, 20);
+            this.textBox13.Multiline = true;
+            this.textBox13.Name = "textBox13";
+            this.textBox13.ReadOnly = true;
+            this.textBox13.Size = new System.Drawing.Size(115, 155);
+            this.textBox13.TabIndex = 159;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -603,10 +627,13 @@
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.groupBox4);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Text = "基于元胞遗传算法的车辆路径问题";
             this.groupBox2.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -663,6 +690,8 @@
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.TextBox textBox13;
     }
 }
 

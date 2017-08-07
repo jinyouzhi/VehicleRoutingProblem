@@ -8,7 +8,7 @@ namespace VehicleRoutingProblem
 {
     public class GA : GABase
     {
-        static int maxL = 100;
+        //static int maxL = 100;
 
         //static Random ra;//随机
         //int N;//地点数量
@@ -19,6 +19,7 @@ namespace VehicleRoutingProblem
         double Pw ;//车辆超额惩罚系数
         double Pc, Pm;//交叉概率和变异概率
 
+        //int[][] backupGroup;//备份初代种群
         int[][] lastGroup;//父代种群
         int[][] newGroup;//子代种群
 
@@ -34,35 +35,6 @@ namespace VehicleRoutingProblem
         double[] Fitness;//适应度
         double[] Pi;//累计概率
 
-        /// <summary>
-        /// 初始化染色体，洗牌算法
-        /// </summary>
-        /// <returns>返回初始化后染色体</returns>
-        int[] randGroup()
-        {
-            int tmp;
-            //ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
-            int[] res = new int[maxL];
-            for (int i = 0; i <= N; ++i)
-                res[i] = i;
-            for (int i = 1; i < N; ++i)
-            {
-                //swap(ref res[i], ref res[ra.Next(i + 1, N - 1)]);
-                //洗牌算法，依次将i跟i~N随机交换
-                tmp = ra.Next(0, 65535) % ((N) - (i)) + i + 1;
-                swap(ref res[i], ref res[tmp]);
-            }
-            return res;
-        }
-
-
-        string getNum(int[] x)
-        {
-            string res = x[1].ToString();
-            for (int i = 2; i <= N; ++i)
-                res += "-" + x[i].ToString();
-            return res;
-        }
 
         /// <summary>
         /// 染色体解码函数，输入一个染色体，得到该染色体表达的每辆车的服务的客户的顺序
@@ -246,41 +218,61 @@ namespace VehicleRoutingProblem
         /// </summary>
         internal override void initialize()
         {
-            ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
-            N = MainForm.mapCur.N;
+            //ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
+            //N = MainForm.mapCur.N;
             Scale = int.Parse(MainForm.mainForm.textBox12.Text.Trim());
             maxT = int.Parse(MainForm.mainForm.textBox8.Text.Trim());
             maxV = int.Parse(MainForm.mainForm.textBox10.Text.Trim());
             Pc = double.Parse(MainForm.mainForm.textBox5.Text.Trim());
             Pm = double.Parse(MainForm.mainForm.textBox9.Text.Trim());
             Pw = double.Parse(MainForm.mainForm.textBox11.Text.Trim());
-            lastGroup = new int[Scale + 1][];
             newGroup = new int[Scale + 1][];
             for (int i = 0; i < Scale; ++i)
                 newGroup[i] = new int[maxL];
             bestFitness = -1;
-            bestGen = new int[maxL];
             bestT = -1;
+            bestGen = new int[maxL];
+
+            //产生备份初代种群
+            //backupGroup = new int[Scale + 1][];
+            //for (int i = 0; i < Scale; ++i)
+            //{
+            //    backupGroup[i] = randGroup();
+            //    Fitness[i] = Evaluate(lastGroup[i], out plan[i]);
+            //}
+
+            lastGroup = new int[Scale + 1][];
+            MainForm.mainForm.listBox1.Items.Clear();
+            for (int i = 0; i < Scale; ++i)
+            {
+                Array.Copy(MainForm.mainForm.backupGroup[i], lastGroup[i], MainForm.mainForm.backupGroup[i].Length);
+                //Fitness[i] = Evaluate(lastGroup[i], out plan[i]);
+                MainForm.mainForm.listBox1.Items.Add(getNum(lastGroup[i]));
+            }
 
             Fitness = new double[Scale + 1];
             Pi = new double[Scale + 1];
 
             plan = new int[Scale][];
-            bestplan = new int[maxL];
             for (int i = 0; i < Scale; ++i)
                 plan[i] = new int[maxL];
-
-            MainForm.mainForm.listBox1.Items.Clear();
-            for (int i = 0; i < Scale; ++i)
-            {
-                lastGroup[i] = randGroup();
-                //Fitness[i] = Evaluate(lastGroup[i], out plan[i]);
-                MainForm.mainForm.listBox1.Items.Add(getNum(lastGroup[i]));
-            }
+            bestplan = new int[maxL];
         }
 
         /// <summary>
-        /// 
+        /// 恢复初始状态
+        /// </summary>
+        internal override void reset()
+        {
+            //bestFitness = -1;
+            //bestT = -1;
+            //bestplan = new int[maxL];
+            //bestGen = new int[maxL];
+            //Array.Copy(backupGroup, lastGroup, backupGroup.Length);
+        }
+
+        /// <summary>
+        /// 运行
         /// </summary>
         /// <param name="form1"></param>
         internal override void run()

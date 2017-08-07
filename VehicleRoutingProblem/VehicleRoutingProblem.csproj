@@ -86,7 +86,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cGA.cs" />
+    <Compile Include="cGA25.cs" />
+    <Compile Include="cGA9.cs" />
     <Compile Include="GA.cs" />
     <Compile Include="GABase.cs" />
     <Compile Include="GraphView.xaml.cs">

@@ -8,10 +8,40 @@ namespace VehicleRoutingProblem
 {
     abstract public class GABase
     {
-        internal static Random ra;//随机
-        internal int N;//地点数量
+        public static int maxL = 100;
+        internal static Random ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
+        public static int N;//地点数量
         public int selectPolicy;//0轮盘赌1精英轮盘赌2最优个体
         public int PcMethod;//0静态1自适应
+                            /// <summary>
+                            /// 初始化染色体，洗牌算法
+                            /// </summary>
+                            /// <returns>返回初始化后染色体</returns>
+        public static int[] randGroup()
+        {
+            int tmp;
+            //ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
+            int[] res = new int[N + 1];
+            for (int i = 0; i <= N; ++i)
+                res[i] = i;
+            for (int i = 1; i < N; ++i)
+            {
+                //swap(ref res[i], ref res[ra.Next(i + 1, N - 1)]);
+                //洗牌算法，依次将i跟i~N随机交换
+                tmp = ra.Next(0, 65535) % ((N) - (i)) + i + 1;
+                swap(ref res[i], ref res[tmp]);
+            }
+            return res;
+        }
+
+
+        public static string getNum(int[] x)
+        {
+            string res = x[1].ToString();
+            for (int i = 2; i <= N; ++i)
+                res += "-" + x[i].ToString();
+            return res;
+        }
 
         /// <summary>
         /// 交换函数，交换两个int
@@ -201,6 +231,11 @@ namespace VehicleRoutingProblem
             for (int i = 0; i < flag / 2; i++)
                 swap(ref F[ran1 + i], ref F[ran2 - i]);
         }
+
+        /// <summary>
+        /// 恢复初始状态
+        /// </summary>
+        internal abstract void reset();
 
         /// <summary>
         /// 随机变异算子，[ran1,ran2]随机打乱

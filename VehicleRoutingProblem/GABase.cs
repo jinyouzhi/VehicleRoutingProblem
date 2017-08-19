@@ -214,6 +214,7 @@ namespace VehicleRoutingProblem
                 F1 = S1;
                 F2 = S2;
             }
+
             //选择适应度更好的子代
             int[] _res = new int[N + 1];
             return (Evaluate(S1, out _res) > Evaluate(S2, out _res)) ? S1 : S2;

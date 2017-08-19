@@ -302,14 +302,14 @@
             // 
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
-            "随机变异算子",
+            "交换变异算子",
             "逆转变异算子"});
             this.comboBox1.Location = new System.Drawing.Point(753, 473);
             this.comboBox1.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(124, 20);
             this.comboBox1.TabIndex = 136;
-            this.comboBox1.Text = "随机变异算子";
+            this.comboBox1.Text = "交换变异算子";
             // 
             // comboBox3
             // 

@@ -35,7 +35,7 @@ namespace VehicleRoutingProblem
         /// </summary>
         /// <param name="Gen">被评价染色体 引用，下标0~L-1</param>
         /// <returns>适应度</returns>
-        double Evaluate(int[] Gen, out int[] res)
+        override internal double Evaluate(int[] Gen, out int[] res)
         {
             res = new int[N + 1];
             double curWeight = MainForm.mapCur.Goods[Gen[1]];

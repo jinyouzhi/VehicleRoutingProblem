@@ -43,7 +43,7 @@ namespace VehicleRoutingProblem
         /// <returns>每辆车的服务的客户的顺序</returns>
         //int[] Decoding(int[] Gen)
         //{
-        //    int[] res = new int[maxL];//每辆车的服务的客户的顺序
+        //    int[] res = new int[N + 1];//每辆车的服务的客户的顺序
         //    double curWeight = Form1.mapCur.Goods[Gen[1]];
         //    double curDistance = Form1.mapCur.Roads[0][Gen[1]];
         //    res[1] = 1;
@@ -83,9 +83,9 @@ namespace VehicleRoutingProblem
         /// </summary>
         /// <param name="Gen">被评价染色体 引用，下标0~L-1</param>
         /// <returns>适应度</returns>
-        double Evaluate(int[] Gen, out int[] res)
+        override internal double Evaluate(int[] Gen, out int[] res)
         {
-            res = new int[maxL];
+            res = new int[N + 1];
             double curWeight = MainForm.mapCur.Goods[Gen[1]];
             double curDistance = MainForm.mapCur.Roads[0][Gen[1]];
             double evalution = 0;
@@ -228,10 +228,10 @@ namespace VehicleRoutingProblem
             Pw = double.Parse(MainForm.mainForm.textBox11.Text.Trim());
             newGroup = new int[Scale + 1][];
             for (int i = 0; i < Scale; ++i)
-                newGroup[i] = new int[maxL];
+                newGroup[i] = new int[N + 1];
             bestFitness = -1;
             bestT = -1;
-            bestGen = new int[maxL];
+            bestGen = new int[N + 1];
 
             //产生备份初代种群
             //backupGroup = new int[Scale + 1][];
@@ -242,6 +242,11 @@ namespace VehicleRoutingProblem
             //}
 
             lastGroup = new int[Scale + 1][];
+            for (int i = 0; i < Scale; ++i)
+            {
+                lastGroup[i] = new int[N + 1];
+            }
+
             MainForm.mainForm.listBox1.Items.Clear();
             for (int i = 0; i < Scale; ++i)
             {
@@ -255,8 +260,8 @@ namespace VehicleRoutingProblem
 
             plan = new int[Scale][];
             for (int i = 0; i < Scale; ++i)
-                plan[i] = new int[maxL];
-            bestplan = new int[maxL];
+                plan[i] = new int[N + 1];
+            bestplan = new int[N + 1];
         }
 
         /// <summary>
@@ -266,8 +271,8 @@ namespace VehicleRoutingProblem
         {
             //bestFitness = -1;
             //bestT = -1;
-            //bestplan = new int[maxL];
-            //bestGen = new int[maxL];
+            //bestplan = new int[N + 1];
+            //bestGen = new int[N + 1];
             //Array.Copy(backupGroup, lastGroup, backupGroup.Length);
         }
 

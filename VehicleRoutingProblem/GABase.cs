@@ -8,7 +8,7 @@ namespace VehicleRoutingProblem
 {
     abstract public class GABase
     {
-        public static int maxL = 100;
+        //public static int maxL = 100;
         internal static Random ra = new Random(unchecked((int)DateTime.Now.Ticks));//时间种子
         public static int N;//地点数量
         public int selectPolicy;//0轮盘赌1精英轮盘赌2最优个体
@@ -58,14 +58,14 @@ namespace VehicleRoutingProblem
         }
 
         /// <summary>
-        /// 随机交叉算子，随机取[ran1,ran2]区间交换到新染色体最前，剩下依次排列
+        /// 随机交叉算子，随机取[ran1,ran2]区间交换，剩下依次排列，Ordered Cross
         /// </summary>
         /// <param name="F1"></param>
         /// <param name="F2"></param>
         internal int[] OXCross(ref int[] F1, ref int[] F2, double rate = 0.0)
         {
             int ran1, ran2;
-            int flag;
+            int[] rep1 = new int[N + 1], rep2 = new int[N + 1];
             int[] S1 = new int[N + 1], S2 = new int[N + 1];
             ran1 = 1 + ra.Next(0, 65535) % N;
             do
@@ -78,39 +78,38 @@ namespace VehicleRoutingProblem
                 swap(ref ran1, ref ran2);
             }
 
-            flag = ran2 - ran1 + 1;//删除重复基因前染色体长度
-
-            for (int i = 1, j = ran1; i <= flag; i++, j++)
+            //交叉部分
+            for (int i = ran1; i <= ran2; ++i)
             {
-                S1[i] = F2[j];
-                S2[i] = F1[j];
-            }
-            //已近赋值i=ran2-ran1个基因
-
-
-            for (int k = 1, j = flag + 1; j <= N; j++)//染色体长度
-            {
-                Lab3:
-                S1[j] = F1[k++];
-                for (int i = 1; i <= flag; i++)
-                { if (S1[i] == S1[j]) goto Lab3; }
+                S1[i] = F2[i];
+                rep1[S1[i]] = 1;
+                S2[i] = F1[i];
+                rep2[S2[i]] = 1;
             }
 
-            for (int k = 1, j = flag + 1; j <= N; j++)//染色体长度
+            //剩余部分
+            for (int i = 1, j1 = 1, j2 = 1; i <= N; i++)
             {
-                Lab4:
-                S2[j] = F2[k++];
-                for (int i = 1; i <= flag; i++)
-                { if (S2[i] == S2[j]) goto Lab4; }
+                if (i == ran1)
+                {
+                    i = ran2;
+                    continue;
+                }
+                while (rep1[F1[j1]] > 0) ++j1;
+                S1[i] = F1[j1++];
+                while (rep2[F2[j2]] > 0) ++j2;
+                S2[i] = F2[j2++];
             }
             if (this.GetType() == typeof(GA))
             {
                 F1 = S1;
                 F2 = S2;
             }
-            return S1;
+            //选择适应度更好的子代
+            int[] _res = new int[N + 1];
+            return (Evaluate(S1, out _res) > Evaluate(S2, out _res)) ? S1 : S2;
         }
-   
+
         /// <summary>
         /// 改进型变长逆转交叉算子，随机交换L比例长度
         /// </summary>
@@ -147,14 +146,23 @@ namespace VehicleRoutingProblem
                 while (rep1[F1[j1]] > 0) --j1;
                 S1[i] = F1[j1--];
                 while (rep2[F2[j2]] > 0) --j2;
-                S2[i] = F1[j2--];
+                S2[i] = F2[j2--];
             }
             if (this.GetType() == typeof(GA))
             {
                 F1 = S1;
                 F2 = S2;
             }
-            return S1;
+            //选择适应度更好的子代
+            int[] _res = new int[N + 1];
+            if (Evaluate(S1, out _res) > Evaluate(S2, out _res))
+            {
+                return S1;
+            }
+            else
+            {
+                return S2;
+            }
         }
 
         /// <summary>
@@ -199,18 +207,20 @@ namespace VehicleRoutingProblem
                 while (rep1[F1[j1]] > 0) --j1;
                 S1[i] = F1[j1--];
                 while (rep2[F2[j2]] > 0) --j2;
-                S2[i] = F1[j2--];
+                S2[i] = F2[j2--];
             }
             if (this.GetType() == typeof(GA))
             {
                 F1 = S1;
                 F2 = S2;
             }
-            return S1;
+            //选择适应度更好的子代
+            int[] _res = new int[N + 1];
+            return (Evaluate(S1, out _res) > Evaluate(S2, out _res)) ? S1 : S2;
         }
 
         /// <summary>
-        /// 逆转变异算子，[ran1,ran2]随机打乱，其余逆转
+        /// 逆转变异算子，[ran1,ran2]逆转
         /// </summary>
         /// <param name="F"></param>
         internal void RevVariation(ref int[] F)
@@ -238,13 +248,15 @@ namespace VehicleRoutingProblem
         internal abstract void reset();
 
         /// <summary>
-        /// 随机变异算子，[ran1,ran2]随机打乱
+        /// 交换变异算子，贪婪策略，随机选择一对交换，和原染色体比较适应度，高于原有替换退出，进行30次后保留原有退出
         /// </summary>
         /// <param name="F"></param>
         internal void OnCVariation(ref int[] F)
         {
+            int[] _res = new int[N + 1];
+            double origin = Evaluate(F, out _res);
             int ran1, ran2;
-            int count = 1 + ra.Next(0, 65535) % N;
+            int count = 30;
             for (int i = 1; i <= count; ++i)
             {
                 ran1 = 1 + ra.Next(0, 65535) % N;
@@ -253,12 +265,15 @@ namespace VehicleRoutingProblem
                     ran2 = 1 + ra.Next(0, 65535) % N;
                 } while (ran1 == ran2);
                 swap(ref F[ran1], ref F[ran2]);
+                if (Evaluate(F, out _res) > origin) return;
+                swap(ref F[ran1], ref F[ran2]);
             }
         }
         public delegate void Variation(ref int[] F);
         public Variation variation;
         public delegate int[] Cross(ref int[] F1, ref int[]F2, double rate);
         public Cross cross;
+        abstract internal double Evaluate(int[] Gen, out int[] res);
         abstract internal void run();
         internal abstract void initialize();
     }

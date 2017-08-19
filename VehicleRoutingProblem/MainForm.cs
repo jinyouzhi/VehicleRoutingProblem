@@ -86,7 +86,7 @@ namespace VehicleRoutingProblem
             else
                 solve.cross = solve.ORXCross;
 
-            if (comboBox1.Text.Trim() == "随机变异算子")
+            if (comboBox1.Text.Trim() == "交换变异算子")
                 solve.variation = solve.OnCVariation;
             else
                 solve.variation = solve.RevVariation;

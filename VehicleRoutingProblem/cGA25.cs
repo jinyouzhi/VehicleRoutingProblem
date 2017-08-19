@@ -28,14 +28,14 @@ namespace VehicleRoutingProblem
         double bestEvalution;
 
         double[][] Fitness;//适应度
-        //double[][] Pi;//累计概率
-        
+                           //double[][] Pi;//累计概率
+
         /// <summary>
         /// 染色体评价函数，输入一个染色体得到该染色体适应度
         /// </summary>
         /// <param name="Gen">被评价染色体 引用，下标0~L-1</param>
         /// <returns>适应度</returns>
-        double Evaluate(int[] Gen, out int[] res)
+        override internal double Evaluate(int[] Gen, out int[] res)
         {
             res = new int[N + 1];
             double curWeight = MainForm.mapCur.Goods[Gen[1]];
@@ -249,8 +249,8 @@ namespace VehicleRoutingProblem
         {
             //bestFitness = -1;
             //bestT = -1;
-            //bestplan = new int[maxL];
-            //bestGen = new int[maxL];
+            //bestplan = new int[N + 1];
+            //bestGen = new int[N + 1];
             //Array.Copy(backupGroup, curGroup, backupGroup.Length);
         }
         /// <summary>

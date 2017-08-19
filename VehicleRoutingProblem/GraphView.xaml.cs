@@ -66,6 +66,11 @@ namespace VehicleRoutingProblem
             ID = id;
             EdgeColor = colorCode[Math.Max(source.Position, target.Position) % colorCode.Length];
         }
+
+        public override string ToString()
+        {
+            return ID;
+        }
     }
 
     /// <summary>
@@ -128,9 +133,9 @@ namespace VehicleRoutingProblem
                 for (v1 = 0; j <= bestplan[i]; ++j, v1 = v2)
                 {
                     v2 = bestGen[j];
-                    gv._graph.AddEdge(new VEdge(string.Format("{0}->{1}:{2}", v1, v2, MainForm.mapCur.Roads[v1][v2]), existingVerrtics[v1], existingVerrtics[v2]));
+                    gv._graph.AddEdge(new VEdge(string.Format("{0}->{1} 距离:{2}", v1, v2, MainForm.mapCur.Roads[v1][v2]), existingVerrtics[v1], existingVerrtics[v2]));
                 }
-                gv._graph.AddEdge(new VEdge(string.Format("{0}->{1}:{2}", v1, 0, MainForm.mapCur.Roads[v1][0]), existingVerrtics[v1], existingVerrtics[0]));
+                gv._graph.AddEdge(new VEdge(string.Format("{0}->{1} 距离:{2}", v1, 0, MainForm.mapCur.Roads[v1][0]), existingVerrtics[v1], existingVerrtics[0]));
             }
             gv.DataContext = gv._graph;
         }

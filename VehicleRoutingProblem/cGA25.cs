@@ -140,7 +140,7 @@ namespace VehicleRoutingProblem
                         if (Fitness[i + dir[k, 0]][j + dir[k, 1]] >= Fitness[i][j])
                             Pi[k] = Pi[k - 1] + Fitness[i + dir[k, 0]][j + dir[k, 1]] / sumVal;
                         else
-                            Pi[k] = 0.0;
+                            Pi[k] = Pi[k - 1];
 
                     //轮盘赌
                     //rand = ra.Next(0, 65535) % 1000 / 1000.0;

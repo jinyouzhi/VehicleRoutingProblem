@@ -155,14 +155,7 @@ namespace VehicleRoutingProblem
             }
             //选择适应度更好的子代
             int[] _res = new int[N + 1];
-            if (Evaluate(S1, out _res) > Evaluate(S2, out _res))
-            {
-                return S1;
-            }
-            else
-            {
-                return S2;
-            }
+            return (Evaluate(S1, out _res) > Evaluate(S2, out _res)) ? S1 : S2;
         }
 
         /// <summary>

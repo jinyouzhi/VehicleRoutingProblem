@@ -121,47 +121,58 @@ namespace VehicleRoutingProblem
             {
                 for (int j = 2; j < ScaleN - 2; j++)
                 {
-                    sumVal = 0;
-                    //精英轮盘赌
-                    for (int k = 0; k < 24; ++k)
-                        if (Fitness[i + dir[k, 0]][j + dir[k, 1]] >= Fitness[i][j])
-                            sumVal += Fitness[i + dir[k, 0]][j + dir[k, 1]];
-
-                    //for (int k = 0; k < 8; k++)
-                    //    sumVal += Fitness[i + dir[k, 0]][j + dir[k, 1]];
-                    //Pi[0] = Fitness[i + dir[0, 0]][j + dir[0, 1]] / sumVal;
-                    //for (int k = 1; k < 8; k++)
-                    //    Pi[k] = Pi[k - 1] + Fitness[i + dir[k, 0]][j + dir[k, 1]] / sumVal;
-                    if (Fitness[i + dir[0, 0]][j + dir[0, 1]] >= Fitness[i][j])
-                        Pi[0] = Fitness[i + dir[0, 0]][j + dir[0, 1]] / sumVal;
-                    else
-                        Pi[0] = 0.0;
-                    for (int k = 1; k < 24; k++)
-                        if (Fitness[i + dir[k, 0]][j + dir[k, 1]] >= Fitness[i][j])
-                            Pi[k] = Pi[k - 1] + Fitness[i + dir[k, 0]][j + dir[k, 1]] / sumVal;
-                        else
-                            Pi[k] = Pi[k - 1];
-
-                    //轮盘赌
-                    //rand = ra.Next(0, 65535) % 1000 / 1000.0;
-                    //hit = ra.Next(0, 65535) % 8;//随机作为默认，无法命中时作为结果
-                    //for (int k = 0; k < 8; ++k)
-                    //{
-                    //    if (rand < Pi[k])
-                    //    {
-                    //        hit = k;
-                    //        break;
-                    //    }
-                    //}
-                    //精英轮盘赌
-                    rand = ra.Next(0, 65535) % 1000 / 1000.0;
-                    hit = 24;
-                    for (int k = 0; k < 24; ++k)
+                    if (selectPolicy == 2)
                     {
-                        if (rand < Pi[k])
+                        //最优个体
+                        hit = 0;
+                        for (int k = 1; k < 8; ++k)
+                            if (Fitness[i + dir[k, 0]][j + dir[k, 1]] >= Fitness[i + dir[hit, 0]][j + dir[hit, 1]])
+                                hit = k;
+                    }
+                    else
+                    {
+                        sumVal = 0;
+                        //精英轮盘赌
+                        for (int k = 0; k < 24; ++k)
+                            if (Fitness[i + dir[k, 0]][j + dir[k, 1]] >= Fitness[i][j])
+                                sumVal += Fitness[i + dir[k, 0]][j + dir[k, 1]];
+
+                        //for (int k = 0; k < 8; k++)
+                        //    sumVal += Fitness[i + dir[k, 0]][j + dir[k, 1]];
+                        //Pi[0] = Fitness[i + dir[0, 0]][j + dir[0, 1]] / sumVal;
+                        //for (int k = 1; k < 8; k++)
+                        //    Pi[k] = Pi[k - 1] + Fitness[i + dir[k, 0]][j + dir[k, 1]] / sumVal;
+                        if (Fitness[i + dir[0, 0]][j + dir[0, 1]] >= Fitness[i][j])
+                            Pi[0] = Fitness[i + dir[0, 0]][j + dir[0, 1]] / sumVal;
+                        else
+                            Pi[0] = 0.0;
+                        for (int k = 1; k < 24; k++)
+                            if (Fitness[i + dir[k, 0]][j + dir[k, 1]] >= Fitness[i][j])
+                                Pi[k] = Pi[k - 1] + Fitness[i + dir[k, 0]][j + dir[k, 1]] / sumVal;
+                            else
+                                Pi[k] = Pi[k - 1];
+
+                        //轮盘赌
+                        //rand = ra.Next(0, 65535) % 1000 / 1000.0;
+                        //hit = ra.Next(0, 65535) % 8;//随机作为默认，无法命中时作为结果
+                        //for (int k = 0; k < 8; ++k)
+                        //{
+                        //    if (rand < Pi[k])
+                        //    {
+                        //        hit = k;
+                        //        break;
+                        //    }
+                        //}
+                        //精英轮盘赌
+                        rand = ra.Next(0, 65535) % 1000 / 1000.0;
+                        hit = 24;
+                        for (int k = 0; k < 24; ++k)
                         {
-                            hit = k;
-                            break;
+                            if (rand < Pi[k])
+                            {
+                                hit = k;
+                                break;
+                            }
                         }
                     }
                     double p = (PcMethod == 1) ? (Pc + (1 - Pc)*((Fitness[i + dir[hit, 0]][j + dir[hit, 1]] - Fitness[i][j]) /(Fitness[i + dir[hit, 0]][j + dir[hit,1]] - Fitness[i][j]*Pc))) : (Pc);

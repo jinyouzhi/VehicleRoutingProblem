@@ -387,7 +387,7 @@
             this.comboBox4.Items.AddRange(new object[] {
             "精英轮盘赌(cGA)",
             "轮盘赌(GA)",
-            "最优个体"});
+            "最优个体(cGA)"});
             this.comboBox4.Location = new System.Drawing.Point(753, 380);
             this.comboBox4.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox4.Name = "comboBox4";

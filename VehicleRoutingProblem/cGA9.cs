@@ -173,14 +173,18 @@ namespace VehicleRoutingProblem
                             }
                         }
                     }
-                    double p = (PcMethod == 1) ? (Pc + (1 - Pc)*((Fitness[i + dir[hit, 0]][j + dir[hit, 1]] - Fitness[i][j]) /(Fitness[i + dir[hit, 0]][j + dir[hit,1]] - Fitness[i][j]*Pc))) : (Pc);
-                    newS = cross(ref curGroup[i][j], ref curGroup[i + dir[hit, 0]][j + dir[hit, 1]], p);
-                    newFitness = Evaluate(newS, out newPlan);
-                    if (newFitness > Fitness[i][j])//新子代如果更优替代中心元胞
-                    {
-                        Array.Copy(newS, curGroup[i][j], newS.Length);
-                        Array.Copy(newPlan, plan[i][j], newPlan.Length);
-                    }
+                    double p = (PcMethod == 1) ? (Pc + (1 - Pc) * ((Fitness[i + dir[hit, 0]][j + dir[hit, 1]] - Fitness[i][j]) / (Fitness[i + dir[hit, 0]][j + dir[hit, 1]] - Fitness[i][j] * Pc))) : (Pc);
+					rand = ra.Next(0, 65535) % 1000 / 1000.0;
+					if (rand < p)
+					{
+						newS = cross(ref curGroup[i][j], ref curGroup[i + dir[hit, 0]][j + dir[hit, 1]], p);
+						newFitness = Evaluate(newS, out newPlan);
+						if (newFitness > Fitness[i][j])//新子代如果更优替代中心元胞
+						{
+							Array.Copy(newS, curGroup[i][j], newS.Length);
+							Array.Copy(newPlan, plan[i][j], newPlan.Length);
+						}
+					}
                     else
                     {
                         //否则按一定概率变异

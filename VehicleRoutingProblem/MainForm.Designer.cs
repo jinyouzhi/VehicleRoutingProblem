@@ -630,7 +630,7 @@
             this.Controls.Add(this.groupBox4);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
-            this.Text = "基于元胞遗传算法的车辆路径问题";
+            this.Text = "车辆路径问题的元胞遗传算法仿真分析系统 1.0";
             this.groupBox2.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();

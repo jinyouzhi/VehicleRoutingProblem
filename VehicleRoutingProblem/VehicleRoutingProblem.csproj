@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="cGA25.cs" />
+    <Compile Include="cGA5.cs" />
     <Compile Include="cGA9.cs" />
     <Compile Include="GA.cs" />
     <Compile Include="GABase.cs" />

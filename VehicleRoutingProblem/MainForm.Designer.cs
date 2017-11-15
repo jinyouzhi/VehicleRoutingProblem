@@ -227,7 +227,8 @@
             this.comboBox2.Items.AddRange(new object[] {
             "元胞遗传Moore型(cGA9)",
             "元胞遗传扩展Moore型(cGA25)",
-            "遗传算法(GA)"});
+            "元胞遗传von Neumann型(cGA5)",
+            "遗传算法(GA)、"});
             this.comboBox2.Location = new System.Drawing.Point(753, 357);
             this.comboBox2.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox2.Name = "comboBox2";

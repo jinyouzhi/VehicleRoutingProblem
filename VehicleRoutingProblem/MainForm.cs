@@ -76,6 +76,8 @@ namespace VehicleRoutingProblem
                 solve = new GA();
             else if (comboBox2.Text.Trim() == "元胞遗传Moore型(cGA9)")
                 solve = new cGA9();
+            else if (comboBox2.Text.Trim() == "元胞遗传von Neumann型(cGA5)")
+                solve = new cGA5();
             else
                 solve = new cGA25();
 
